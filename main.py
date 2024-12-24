@@ -8,6 +8,7 @@ from dotenv import load_dotenv, dotenv_values
 load_dotenv()
 bot_token = os.getenv("DISCORD_BOT_TOKEN")
 
+# generates unique id by hashing user's discord id
 def generate_unique_id(discord_user_id):
     id = f"{discord_user_id}".encode('utf-8')
     hashed_id = hashlib.sha256(id).hexdigest()
@@ -36,8 +37,10 @@ class Client(discord.Client):
 
 # FIXME: Mechanism for sending message after some inactivity
 
-intents = discord.Intents.default() # intents allow bot to subscribe to specific bucket of events
-intents.message_content = True      # enables app to recieve actual content of newly created messages
+# intents allow bot to subscribe to specific bucket of events
+intents = discord.Intents.default() 
+# enables app to recieve actual content of newly created messages
+intents.message_content = True      
 
 
 client = Client(intents=intents)
