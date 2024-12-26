@@ -8,22 +8,20 @@ from dotenv import load_dotenv, dotenv_values
 import json
 import random
 
-# loading in ENV variable: Discord Token
-load_dotenv()
-bot_token = os.getenv("DISCORD_BOT_TOKEN")
+from config import BOT_TOKEN
 
 INACTIVITY_THRESHOLD = 5 # time in seconds
 last_message_times = {}
 questions = {}
 
 # questions in same order as channels {channel_id: ["q1","q2"] }
-with open("questions.json", "r") as json_file:
+with open("data/questions.json", "r") as json_file:
     json_data = json.load(json_file)
     questions = {int(key): value for key, value in json_data.items()}
 
 # dictionary to keep track of time last messages were sent in channels
 # order: campus-life, academics, general
-with open("channels.json", "r") as json_file:
+with open("data/channels.json", "r") as json_file:
     json_data = json.load(json_file)
     last_message_times = {int(key): None if value == "None" else value for key, value in json_data.items()}
 
@@ -69,7 +67,7 @@ class Client(discord.Client):
         # print(last_message_times)
 
         # write message and hashed id to file
-        with open('data.csv', 'a', newline='') as file:
+        with open('data/messages.csv', 'a', newline='') as file:
             writer = csv.writer(file)
             writer.writerows([[unique_id ,message.content]])
             file.close()
@@ -82,4 +80,4 @@ intents.message_content = True
 
 
 client = Client(intents=intents)
-client.run(bot_token)
+client.run(BOT_TOKEN)
