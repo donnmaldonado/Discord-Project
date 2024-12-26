@@ -1,28 +1,16 @@
-import discord
+import discord, random
 from discord.ext import tasks
-import csv
-import hashlib
-from datetime import datetime, timedelta
-import os
-from dotenv import load_dotenv, dotenv_values
-import json
-import random
-from utils.file_utils import load_last_message_times, load_questions
+from datetime import datetime
+from utils.file_utils import load_last_message_times, load_questions, save_message
+from utils.id_utils import generate_unique_id
 
-from config import BOT_TOKEN
+from config import BOT_TOKEN, INACTIVITY_THRESHOLD
 
-INACTIVITY_THRESHOLD = 5 # time in seconds
 last_message_times = load_last_message_times("data/channels.json")
 questions = load_questions("data/questions.json")
 
 
-# generates unique id by hashing user's discord id
-def generate_unique_id(discord_user_id):
-    id = f"{discord_user_id}".encode('utf-8')
-    hashed_id = hashlib.sha256(id).hexdigest()
-    return hashed_id
-
-# checks inactivity of channels, sends message if inactive
+# checks inactivity of channels, sends random question from pool if inactive
 @tasks.loop(seconds=5)
 async def check_inactivity(self):
     print(f"checking inactivity {datetime.utcnow()}")
@@ -55,13 +43,9 @@ class Client(discord.Client):
         
         # update time of last message in specific channel
         last_message_times[message.channel.id] = datetime.utcnow()
-        # print(last_message_times)
 
-        # write message and hashed id to file
-        with open('data/messages.csv', 'a', newline='') as file:
-            writer = csv.writer(file)
-            writer.writerows([[unique_id ,message.content]])
-            file.close()
+        # saves message to csv file
+        save_message("data/data.csv", [[unique_id ,message.content]])
 
 
 # intents allow bot to subscribe to specific bucket of events
