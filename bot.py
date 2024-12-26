@@ -1,17 +1,18 @@
 import discord, random
 from discord.ext import tasks
 from datetime import datetime
-from utils.file_utils import load_last_message_times, load_questions, save_message
+from utils.file_utils import load_last_message_times, load_questions
 from utils.id_utils import generate_unique_id
+from utils.sheets_utils import save_data
 
-from config import BOT_TOKEN, INACTIVITY_THRESHOLD
+from config import BOT_TOKEN, INACTIVITY_THRESHOLD, INACTIVITY_LOOP_TIME
 
 last_message_times = load_last_message_times("data/channels.json")
 questions = load_questions("data/questions.json")
 
 
 # checks inactivity of channels, sends random question from pool if inactive
-@tasks.loop(seconds=5)
+@tasks.loop(seconds=INACTIVITY_LOOP_TIME)
 async def check_inactivity(self):
     print(f"checking inactivity {datetime.utcnow()}")
     for key in last_message_times:
@@ -41,8 +42,8 @@ class Client(discord.Client):
         unique_id = generate_unique_id(message.author)
         # update time of last message in specific channel
         last_message_times[message.channel.id] = datetime.utcnow()
-        # saves message to csv file
-        save_message("data/data.csv", [[unique_id ,message.content]])
+        # saves message to google sheets file
+        save_data([unique_id, message.content])
 
 
 # intents allow bot to subscribe to specific bucket of events

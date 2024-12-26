@@ -5,4 +5,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
-INACTIVITY_THRESHOLD = 5 # time in seconds
+SHEET_ID = os.getenv("SHEETS_TOKEN")
+WORKSHEET_NAME = os.getenv("WORKSHEET_NAME")
+INACTIVITY_THRESHOLD = 3600 # time in seconds (1 hr)
+INACTIVITY_LOOP_TIME = 60   # time in seconds (1 min)

@@ -14,10 +14,3 @@ def load_questions(file_path):
         json_data = json.load(json_file)
         questions = {int(key): value for key, value in json_data.items()}
         return questions
-
-# Saves message and unique id for sender to csv file
-def save_message(file_path, rows):
-    with open('data/messages.csv', 'a', newline='') as file:
-            writer = csv.writer(file)
-            writer.writerows(rows)
-    
