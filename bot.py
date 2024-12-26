@@ -37,13 +37,10 @@ class Client(discord.Client):
         # ignore messages from self(bot)
         if message.author == self.user:
             return
-
         # create unique id for given user
         unique_id = generate_unique_id(message.author)
-        
         # update time of last message in specific channel
         last_message_times[message.channel.id] = datetime.utcnow()
-
         # saves message to csv file
         save_message("data/data.csv", [[unique_id ,message.content]])
 
