@@ -7,23 +7,18 @@ import os
 from dotenv import load_dotenv, dotenv_values
 import json
 import random
+from utils.file_utils import load_channels_and_last_message_times
 
 from config import BOT_TOKEN
 
 INACTIVITY_THRESHOLD = 5 # time in seconds
-last_message_times = {}
+last_message_times = load_channels_and_last_message_times("data/channels.json")
 questions = {}
 
 # questions in same order as channels {channel_id: ["q1","q2"] }
 with open("data/questions.json", "r") as json_file:
     json_data = json.load(json_file)
     questions = {int(key): value for key, value in json_data.items()}
-
-# dictionary to keep track of time last messages were sent in channels
-# order: campus-life, academics, general
-with open("data/channels.json", "r") as json_file:
-    json_data = json.load(json_file)
-    last_message_times = {int(key): None if value == "None" else value for key, value in json_data.items()}
 
 # generates unique id by hashing user's discord id
 def generate_unique_id(discord_user_id):
